@@ -1,147 +1,330 @@
-import java.util.*;
+package task4;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class tasks {
-
     public static void main(String[] args) {
-        int[] array = {9, 4, 26, 26, 0, 0, 5, 20, 6, 25, 5};
-        System.out.print(code(7977));
+
+        System.out.println(essay(10, 7, "hello my name is Bessie and this is my essay"));
+
+        System.out.println(Arrays.toString(split("() () ()")));
+
+        System.out.println(toCamelCase("hello_edabit"));
+
+        System.out.println(toSnakeCase("helloEdabit"));
+
+        double[] arr = new double[]{9, 17, 30, 1.5};
+        System.out.println(overTime(arr));
+
+        System.out.println(BMI("205 pounds", "73 inches"));
+
+        System.out.println(bugger(39));
+
+        System.out.println(toStarShorthand("abbccc"));
+
+        System.out.println(doesRhyme("Sam I am!", "Green eggs and ham."));
+
+        System.out.println(trouble(666789, 12345667));
+
+        System.out.println(countUniqueBooks("AZYWABBCATTTA", 'A'));
+
     }
 
-    //task1
-    public static String sevenBoom (int[] a){
-        for (int n: a) {
-            while (n > 0) {
-                if (n % 10 == 7) return "Boom!";
-                n /= 10;
+    public static String essay(int n, int k, String str){
+        String[] words = str.split(" ");
+        int current_string_length = 0;
+        StringBuilder answer = new StringBuilder();
+
+        for (int i = 0; i < words.length; i++) {
+            if (current_string_length + words[i].length() <= k) {
+                answer.append(words[i]);
+                answer.append(" ");
+
+                current_string_length += words[i].length();
+            } else {
+                answer.append("\n");
+                answer.append(words[i]);
+                answer.append(" ");
+                current_string_length = words[i].length();
             }
         }
-        return "there is no 7 in the array";
-    }
 
-    //task2
-    public static boolean cons (int[] ar) {
-        Arrays.sort(ar);
-        for (int i = 0; i < ar.length-1; i ++) {
-            if (ar[i+1]-ar[i]!=1) return false;
-        }
-        return true;
-    }
-
-    //task3
-    public static String unmix(String s){
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < s.length(); i+=2) {
-            if (i+1 == s.length()) {
-                result.append(s.charAt(i));
-            }
-            else {
-                result.append(s.charAt(i+1));
-                result.append(s.charAt(i));
+        for (int i = 1; i < answer.length(); i++) {
+            if (answer.charAt(i) == "\n".charAt(0)) {
+                answer = new StringBuilder(answer.substring(0, i - 1) + answer.substring(i));
             }
         }
-        return result.toString();
-    }
-    //task4
-    public static String noYelling (String s) {
-        int i = s.length()-1;
-        while ((s.charAt(i) == '!' || s.charAt(i) == '?') && (i!=0) && (s.charAt(i-1)=='!' || s.charAt(i-1) =='?')){
-            s=s.substring(0,i);
-            i-=1;
-        }
-        return s;
-    }
-    //task5
-    public static String xPronounce (String s){
-        String[] str = s.split(" ");
-        for (int i = 0; i < str.length; i ++){
-            if (str[i].equals("x"))
-            {str[i] = "ecks";}
-            if (str[i].substring(0) == "x")
-            {str[i] = str[i].replace("x","z");}
-            if (str[i].contains("x"))
-            {str[i] = str[i].replace("x", "cks");}
-        }
-        return String.join(" ", str);
-    }
-    //task6
-    public static int largestGap(int[] ar){
-        Arrays.sort(ar);
-        int largest=0;
-        for (int i = 0; i < ar.length - 1; i ++){
-            if (ar[i+1] - ar[i] > largest) largest = ar[i+1] - ar[i];
-        }
-        return largest;
+
+        answer = new StringBuilder(answer.substring(0, answer.length() - 1));
+
+        return answer.toString();
     }
 
-    //task7
-    public static int code (int n){
-        ArrayList<Integer> digits = new ArrayList<Integer>();
-        while (n > 0 ) {
-            digits.add(n%10);
-            n/=10;
-        }
-        digits.sort(Collections.reverseOrder());
+    public static String[] split(String str) {
+        char[] str_char = str.toCharArray();
 
-        int newNum = 0;
-        for (int i = 0; i < digits.size(); i++) {
-            newNum += digits.get(i) * (int) Math.pow(10, i);
+        ArrayList<String> answer = new ArrayList<>();
+        String buffer = "";
+        int opened = 0;
+
+        for (int i = 0; i < str_char.length; i++) {
+            if (str_char[i] == "(".charAt(0)) { opened += 1; }
+            if (str_char[i] == ")".charAt(0)) { opened -= 1; }
+
+            buffer += str_char[i];
+
+            if (opened == 0) {
+                answer.add(buffer);
+                buffer = "";
+            }
         }
-        if (n-newNum > 0) return (n-newNum);
-        else return 0;
+
+        String[] final_answer = new String[answer.size()];
+        for (int i = 0; i < answer.size(); i++) {
+            final_answer[i] = answer.get(i);
+        }
+
+        return final_answer;
     }
 
-    //task8
-    public static String commonLastVowel (String s) {
-        int newValue,max = 0;
-        String result = "";
-        Map<Character,Integer> common = new HashMap<Character,Integer>();
-        String[] words = s.toLowerCase().split(" ");
-        List<Character> vowel = Arrays.asList('e','y','u','i','o','a');
-        for (String word:words){
-            for (int i = word.length(); i >= 0; i--){
-                if (vowel.contains(word.charAt(i))){
-                    if (common.containsKey(word.charAt(i))) {
-                        newValue = common.get(word.charAt(i))+1;
+    public static String toCamelCase(String str) {
+        char[] str_char = str.toCharArray();
+        StringBuilder answer = new StringBuilder();
+        int i = 0;
+
+        while (i < str_char.length) {
+            if (str_char[i] == '_') {
+                answer.append(Character.toUpperCase(str_char[i + 1]));
+                i += 2;
+            } else {
+                answer.append(str_char[i]);
+                i += 1;
+            }
+        }
+
+        return answer.toString();
+    }
+
+    public static String toSnakeCase(String str) {
+        char[] str_char = str.toCharArray();
+        String answer = "";
+
+        for (int i = 0; i < str_char.length; i++) {
+            if (Character.isUpperCase(str_char[i])) {
+                answer += "_" + Character.toLowerCase(str_char[i]);
+            } else {
+                answer += str_char[i];
+            }
+        }
+
+        return answer;
+    }
+
+    public static String overTime(double[] arr) {
+
+        double time_start = arr[0];
+        double time_end = arr[1];
+        double hourly_rate = arr[2];
+        double over_time_scale = arr[3];
+
+        double pay = 0;
+
+        if ((17 - time_start > 0) && (time_end >= 17)) {
+            pay += (17 - time_start) * hourly_rate;
+        } else if ((17 - time_start > 0) && (time_end < 17)) {
+            pay += (time_end - time_start) * hourly_rate;
+        }
+
+        if ((time_end - 17 > 0) && (time_start <= 17)) {
+            pay += (time_end - 17) * (hourly_rate * over_time_scale);
+        } else if ((17 - time_start <= 0) && (time_end >= 17)) {
+            pay += (time_end - time_start) * hourly_rate * over_time_scale;
+        }
+
+        pay = Math.round(pay * 100.0) / 100.0;
+
+        String answer = "$";
+        answer += Double.toString(pay);
+
+        int point_id = 0;
+        for (int i = 0; i < answer.length(); i++) {
+            if (answer.charAt(i) == '.') {
+                point_id = i;
+            }
+        }
+
+        if (point_id > answer.length()-3) {answer += "0";}
+
+        return answer;
+    }
+
+    public static String BMI(String weight, String height) {
+        char[] weight_char = weight.toCharArray();
+        char[] height_char = height.toCharArray();
+
+        int weight_space_id = 0;
+        int height_space_id = 0;
+
+        double weight_value = 0;
+        double height_value = 0;
+
+        for (int i = 0; i < weight_char.length; i++) {
+            if (weight_char[i] == ' ') {weight_space_id = i;}
+        }
+
+        for (int i = 0; i < height_char.length; i++) {
+            if (height_char[i] == ' ') {height_space_id = i;}
+        }
+
+        if (weight.substring(weight_space_id + 1).equals("kilos")) {
+            weight_value = Double.parseDouble(weight.substring(0, weight_space_id));
+        } else if (weight.substring(weight_space_id + 1).equals("pounds")) {
+            weight_value = Double.parseDouble(weight.substring(0, weight_space_id)) * 0.453592;
+        }
+
+        if (height.substring(height_space_id + 1).equals("meters")) {
+            height_value = Double.parseDouble(height.substring(0, height_space_id));
+        } else if (height.substring(height_space_id + 1).equals("inches")) {
+            height_value = Double.parseDouble(height.substring(0, height_space_id)) * 0.02539998628;
+        }
+
+        double BMI = weight_value / (height_value * height_value);
+        BMI = Math.round(BMI * 10.0) / 10.0;
+
+        String answer = String.valueOf(BMI) + " ";
+        if (BMI < 18.5) {
+            answer += "Underweight";
+        } else if (BMI > 25.0){
+            answer += "Overweight";
+        } else {
+            answer += "Normal weight";
+        }
+
+        return answer;
+    }
+
+    public static int bugger(int number) {
+        char[] number_char = Integer.toString(number).toCharArray();
+
+        int counter = 0;
+
+        while (number_char.length > 1) {
+            int result = 1;
+            for (int i = 0; i < number_char.length; i++) {
+                int digit = Integer.parseInt(String.valueOf(number_char[i]));
+                result *= digit;
+            }
+            number_char = Integer.toString(result).toCharArray();
+            counter += 1;
+        }
+
+        return counter;
+    }
+
+    public static String toStarShorthand(String str) {
+
+        if (str.length() == 0) { return ""; }
+
+        char[] str_char = str.toCharArray();
+
+        int counter = 1;
+        StringBuilder answer = new StringBuilder();
+
+        for (int i = 0; i < str_char.length; i++) {
+            if (i > 0) {
+                if (str_char[i] == str_char[i-1]) {
+                    counter += 1;
+                } else {
+                    if (counter > 1) {
+                        answer.append(str_char[i - 1]).append("*").append(counter);
+                    } else {
+                        answer.append(str_char[i - 1]);
                     }
-                    else {
-                        newValue = 1;
-                    }
-                    common.put(word.charAt(i), newValue);
-                    break;
+                    counter = 1;
                 }
             }
         }
-        for (Map.Entry<Character,Integer> entry : common.entrySet()){
-            if (max < entry.getValue()) {
-                max = entry.getValue();
-                result = entry.getKey().toString();
+        if (counter > 1) {
+            answer.append(str_char[str_char.length - 1]).append("*").append(counter);
+        } else {
+            answer.append(str_char[str_char.length - 1]);
+        }
+
+        return answer.toString();
+    }
+
+    public static boolean doesRhyme(String str1, String str2) {
+        char[] word1 = str1.split(" ")[str1.split(" ").length - 1].toCharArray();
+        char[] word2 = str2.split(" ")[str2.split(" ").length - 1].toCharArray();
+
+        String vowels = "aeiou";
+
+        ArrayList<Character> word1_vowels = new ArrayList<>();
+        ArrayList<Character> word2_vowels = new ArrayList<>();
+
+        for (int i = 0; i < word1.length; i++) {
+            if (vowels.indexOf(Character.toLowerCase(word1[i])) > -1) {
+                word1_vowels.add(Character.toLowerCase(word1[i]));
             }
         }
+
+        for (int i = 0; i < word2.length; i++) {
+            if (vowels.indexOf(Character.toLowerCase(word2[i])) > -1) {
+                word2_vowels.add(Character.toLowerCase(word2[i]));
+            }
+        }
+
+        boolean result = true;
+
+        for (int i = 0; i < word1_vowels.size(); i++) {
+            if (!word2_vowels.contains(word1_vowels.get(i))){
+                result = false;
+            }
+        }
+
+        for (int i = 0; i < word2_vowels.size(); i++) {
+            if (!word1_vowels.contains(word2_vowels.get(i))){
+                result = false;
+            }
+        }
+
         return result;
     }
 
-    //task9
-    public static int memeSum (int a, int b){
-        StringBuilder result = new StringBuilder();
-        while (a % 10 != 0 || b % 10 != 0) {
-            int c = a % 10 + b % 10;
-            result.insert(0, c);
-            a/=10;
-            b/=10;
-        }
-        return(Integer.parseInt(result.toString()));
-    }
-
-    //task10
-    public static String unrepeated ( String s) {
-        ArrayList<Character> chars = new ArrayList<>();
-        StringBuilder result = new StringBuilder();
-        for (char c: s.toCharArray()) {
-            if (!chars.contains(c)) {
-                chars.add(c);
-                result.append(c);
+    public static boolean trouble(int num1, int num2) {
+        String strNum1 = Integer.toString(num1);
+        String strNum2 = Integer.toString(num2);
+        for(int i = 2; i < strNum1.length(); i++) {
+            if(strNum1.charAt(i) == strNum1.charAt(i-1) && strNum1.charAt(i) == strNum1.charAt(i-2)) {
+                int repeatable = strNum1.charAt(i);
+                for (int n = 1; n < strNum2.length(); n++) {
+                    if (repeatable == strNum2.charAt(n) && repeatable == strNum2.charAt(n-1))
+                        return true;
+                }
             }
         }
-        return result.toString();
+        return false;
+    }
+
+    public static int countUniqueBooks(String str, char book_end) {
+        char[] str_char = str.toCharArray();
+
+        ArrayList<Character> unique_chars = new ArrayList<>();
+        boolean is_book_open = false;
+
+        for (int i = 0; i < str_char.length; i++) {
+            if (str_char[i] == book_end) {
+                is_book_open = !is_book_open;
+            } else {
+                if (is_book_open) {
+                    if (!unique_chars.contains(str_char[i])) {
+                        unique_chars.add(str_char[i]);
+                    }
+                }
+            }
+        }
+
+        return unique_chars.size();
     }
 }
